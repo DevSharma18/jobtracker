@@ -6,7 +6,7 @@ const db = require('../db');
 
 //POST /api/auth/signup
 router.post('/signup', async (req, res)=>{
-    const {username, password}= req.body
+    const {email, password}= req.body
     if(!email || !password){
         return res.status(400).json({
             error: 'email and password are required'
@@ -23,7 +23,7 @@ router.post('/signup', async (req, res)=>{
 
         //insert user
         const result = await db.query(
-            'Insert into users (username, password) values ($1, $2) returning id', [email, hashed]
+            'Insert into users (email, password) values ($1, $2) returning id', [email, hashed]
         )
         const userId = result.rows[0].id;
 
@@ -58,7 +58,7 @@ router.post('/login', async (req,res)=>{
     }
     try{
         const result = await db.query(
-            'Select * from users where username = $1', [email]
+            'Select * from users where email = $1', [email]
         )
         if(result.rows.length === 0){
             return res.status(401).json({
