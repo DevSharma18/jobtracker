@@ -3,6 +3,20 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
+const passport = require('passport')
+const {configurePassport} = require('../services/googleAuth')
+
+configurePassport();
+
+//enable session OAuth flow
+router.use(require('express-session')({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false
+}))
+
+router.use(passport.initialize())
+
 
 //POST /api/auth/signup
 router.post('/signup', async (req, res)=>{
@@ -88,6 +102,26 @@ router.post('/login', async (req,res)=>{
             error: 'Internal server error'
         })
     }
+})
+
+// GET /api/auth/google - redirects user to Google's login page
+router.get('/google', passport.authenticate('google', {
+    scope: ['profile', 'email']
+}))
+
+// GET /api/auth/google/callback - Google redirects here after login
+
+router.get('/google/callback', passport.authenticate('google', {session: false, failureRedirect: '/?error=auth_failed'}),
+(req, res)=>{
+    //create JWT for the user
+    const token = jwt.sign(
+        {userId:req.user.id},
+        process.env.JWT_SECRET,
+        {expiresIn: '7d'}
+    )
+
+    // redirect to frontend with token in url
+    res.redirect(`${process.env.CLIENT_URL}?token=${token}`)
 })
 
 module.exports = router;
