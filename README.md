@@ -1,262 +1,245 @@
- # Job Tracker AI
+# Job Tracker AI
 
-  AI-powered career engineering platform that analyzes your resume
-  against job descriptions and provides personalized skill gap
-  analysis with actionable learning plans.
+An AI-powered career engineering platform that analyzes resumes against job descriptions, identifies skill gaps, and generates personalized 30-day learning plans.
 
-  ![Tech Stack](https://img.shields.io/badge/Node.js-339933?style=fla
-  t&logo=node.js&logoColor=white)
-  ![Tech Stack](https://img.shields.io/badge/React-61DAFB?style=flat&
-  logo=react&logoColor=black)
-  ![Tech Stack](https://img.shields.io/badge/PostgreSQL-4169E1?style=
-  flat&logo=postgresql&logoColor=white)
-  ![Tech Stack](https://img.shields.io/badge/Gemini%20AI-8E75FF?style
-  =flat&logo=google&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwind-css&logoColor=white)
+![License](https://img.shields.io/badge/License-ISC-lightgrey?style=flat-square)
 
-  ---
+---
 
-  ## Features
+## Live Demo
 
-  - **Email/Password Authentication** — JWT-based secure login and
-  signup
-  - **Google OAuth 2.0** — One-click login with Google account
-  - **Job Application Tracking** — Add, view, and manage job
-  applications with status tracking
-  - **Resume Analysis** — Upload PDF resume and get AI-powered match
-  score against job descriptions
-  - **Skill Gap Identification** — AI identifies missing skills from
-  your resume
-  - **Personalized Learning Plan** — 30-day actionable plan to close
-  skill gaps
-  - **Real-time Updates** — Live AI analysis status via WebSocket
-  (Socket.io)
-  - **3D Visualizations** — Interactive 3D sphere that responds to AI
-  processing state
-  - **Dark/Light Themes** — Bright login page with dark dashboard
+**[jobtracker.crabdance.com](https://jobtracker.crabdance.com)**
 
-  ---
+---
 
-  ## Tech Stack
+## Features
 
-  | Layer | Technology | Purpose |
-  |-------|-----------|---------|
-  | Frontend | React 19, Vite 8 | SPA framework and build tool |
-  | Styling | Tailwind CSS 3 | Utility-first CSS framework |
-  | Animations | Framer Motion | Page transitions and UI animations |
-  | 3D Graphics | Three.js, React Three Fiber | Interactive 3D
-  visualizations |
-  | Icons | Lucide React | Icon library |
-  | Backend | Node.js, Express 5 | REST API server |
-  | Database | PostgreSQL | Persistent data storage |
-  | Authentication | JWT, Passport.js | Token-based auth, Google
-  OAuth |
-  | File Upload | Multer | PDF file handling |
-  | PDF Processing | pdf-parse | Text extraction from resumes |
-  | AI | Google Gemini API | Resume analysis and skill gap detection
-  |
-  | Real-time | Socket.io | WebSocket communication |
-  | Process Manager | PM2 | Production process management |
-  | Reverse Proxy | Nginx | Static file serving, request proxying |
-  | SSL | Let's Encrypt | Free HTTPS certificates |
+- **Dual Authentication** -- Email/password with JWT and Google OAuth 2.0
+- **Job Pipeline Management** -- Track applications through statuses: Not Applied, Pending, Applied, In Review
+- **AI Resume Analysis** -- Upload a PDF resume and receive a match score against any job description
+- **Skill Gap Detection** -- Identifies specific skills missing from your resume relative to the role
+- **Actionable Learning Plans** -- Generates a structured, step-by-step plan to close identified gaps
+- **Real-time AI Feedback** -- WebSocket-powered live status updates during analysis via Socket.io
+- **3D Interactive Visualizations** -- Dynamic Three.js sphere that responds to AI processing state
 
-  ---
+---
 
-  ## Architecture
+## Tech Stack
 
-  ┌──────────────────────────────────────────────────────────┐
-  │                    EC2 Instance (Ubuntu)                  │
-  │                                                          │
-  │   ┌──────────┐    ┌──────────────┐    ┌──────────────┐  │
-  │   │  Nginx   │───→│  Node.js/    │───→│  PostgreSQL   │  │
-  │   │ (port 80 │    │  Express     │    │  (port 5432)  │  │
-  │   │  & 443)  │    │  (port 3000) │    │              │  │
-  │   └──────────┘    └──────────────┘    └──────────────┘  │
-  │        │                │                                │
-  │        │                ├──→ Google Gemini API           │
-  │        │                └──→ Socket.io (WebSocket)       │
-  │        │                                                 │
-  │   Serves React                                        Stores
-  users, jobs, analyses
-  │   static files
-  └──────────────────────────────────────────────────────────┘
+| Layer            | Technology              | Purpose                                      |
+| ---------------- | ----------------------- | -------------------------------------------- |
+| Frontend         | React 19, Vite 8        | Single-page application and build tool       |
+| Styling          | Tailwind CSS 3          | Utility-first CSS framework                  |
+| Animations       | Framer Motion           | Page transitions and micro-interactions      |
+| 3D Graphics      | Three.js, R3F           | Interactive 3D visualizations                 |
+| Backend          | Node.js, Express 5      | REST API server with middleware pipeline      |
+| Database         | PostgreSQL 16           | Persistent relational data storage           |
+| Auth             | JWT, Passport.js        | Token-based sessions, Google OAuth strategy  |
+| File Handling    | Multer, pdf-parse       | PDF upload and text extraction               |
+| AI               | Google Gemini API       | Resume analysis and skill gap detection      |
+| WebSockets       | Socket.io               | Real-time bidirectional communication        |
+| Process Mgmt     | PM2                     | Production process management and clustering |
+| Reverse Proxy    | Nginx                   | Static file serving, request proxying        |
+| SSL              | Let's Encrypt           | Automated TLS certificate management         |
 
-  ---
+---
 
-  ## Getting Started
+## Architecture
 
-  ### Prerequisites
+```
+                        Internet
+                           |
+                     [ Cloudflare DNS ]
+                           |
+                   [ Nginx :80 / :443 ]
+                    /               \
+       Static Files (React)    API Proxy (/api/*)
+                                      |
+                              [ Node.js :3000 ]
+                              /       |       \
+                        PostgreSQL  Socket.io  Gemini API
+                         :5432     (WebSocket)
+```
 
-  - Node.js 22+
-  - PostgreSQL 16+
-  - Google Cloud Console account (for OAuth and Gemini API)
-  - Gemini API key from [Google AI
-  Studio](https://aistudio.google.com/apikey)
+**Request Flow:**
+1. Browser requests `https://jobtracker.crabdance.com`
+2. Nginx serves React static files from `frontend/dist/`
+3. API requests (`/api/*`) proxy to Node.js on port 3000
+4. WebSocket connections (`/socket.io/*`) proxy to Node.js
+5. Node.js queries PostgreSQL for data and calls Gemini API for analysis
+6. Real-time analysis status pushed to browser via Socket.io
 
-  ### Installation
+---
 
-  1. Clone the repository
-  ```bash
-  git clone https://github.com/DevSharma18/job-tracker.git
-  cd job-tracker
+## Getting Started
 
-  2. Install backend dependencies
-  npm install
+### Prerequisites
 
-  3. Install frontend dependencies and build
-  cd frontend
-  npm install
-  npm run build
-  cd ..
+- Node.js 22 or later
+- PostgreSQL 16 or later
+- Google Cloud Console account
+- Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
 
-  4. Create .env file in project root
-  env
-  PORT=3000
-  NODE_ENV=development
-  DATABASE_URL=postgresql://postgres:your_password@localhost:5432/job
-  tracker
-  JWT_SECRET=your_jwt_secret
-  GOOGLE_CLIENT_ID=your_google_client_id
-  GOOGLE_CLIENT_SECRET=your_google_client_secret
-  GEMINI_API_KEY=your_gemini_api_key
-  CLIENT_URL=http://localhost:5173
+### Installation
 
-  5. Set up PostgreSQL
-  sudo -u postgres psql
-  ALTER USER postgres WITH PASSWORD 'your_password';
-  CREATE DATABASE jobtracker;
-  \q
+```bash
+git clone https://github.com/DevSharma18/job-tracker.git
+cd job-tracker
+```
 
-  6. Start the development server
-  npm run start
+Install backend dependencies:
 
-  7. In a separate terminal, start the frontend dev server
-  cd frontend
-  npm run dev
+```bash
+npm install
+```
 
-  Open http://localhost:5173 in your browser.
+Install frontend dependencies and build:
 
-  ---
-  API Endpoints
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
 
-  ┌───────┬──────────────────────────┬───────────────┬─────────┐
-  │ Metho │         Endpoint         │  Description  │ Auth Re │
-  │   d   │                          │               │ quired  │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ POST  │ /api/auth/signup         │ Register new  │ No      │
-  │       │                          │ user          │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ POST  │ /api/auth/login          │ Login with em │ No      │
-  │       │                          │ ail/password  │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ GET   │ /api/auth/google         │ Redirect to   │ No      │
-  │       │                          │ Google OAuth  │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ GET   │ /api/auth/google/callbac │ Google OAuth  │ No      │
-  │       │ k                        │ callback      │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ GET   │ /api/jobs                │ List all jobs │ Yes     │
-  │       │                          │  for user     │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ POST  │ /api/jobs                │ Add new job   │ Yes     │
-  │       │                          │ application   │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │ POST  │ /api/jobs/:id/analyze    │ Upload resume │ Yes     │
-  │       │                          │  and analyze  │         │
-  ├───────┼──────────────────────────┼───────────────┼─────────┤
-  │       │                          │ Get latest    │         │
-  │ GET   │ /api/jobs/:id/analysis   │ analysis      │ Yes     │
-  │       │                          │ result        │         │
-  └───────┴──────────────────────────┴───────────────┴─────────┘
+### Environment Variables
 
-  ---
-  Project Structure
+Create a `.env` file in the project root:
 
-  job-tracker/
-  ├── frontend/
-  │   ├── src/
-  │   │   ├── App.jsx          # Main application component
-  │   │   ├── index.css         # Global styles
-  │   │   └── main.jsx          # Entry point
-  │   ├── dist/                 # Production build output
-  │   ├── tailwind.config.js
-  │   └── vite.config.js
-  ├── src/
-  │   ├── db.js                 # PostgreSQL connection setup
-  │   ├── schema.sql            # Database schema
-  │   ├── middleware/
-  │   │   └── protect.js        # JWT authentication middleware
-  │   ├── routes/
-  │   │   ├── auth.js           # Auth routes (signup, login, Google
-  OAuth)
-  │   │   ├── jobs.js           # Job CRUD routes
-  │   │   └── analyze.js        # Resume analysis routes
-  │   ├── services/
-  │   │   ├── gemini.js         # Google Gemini AI integration
-  │   │   └── googleAuth.js     # Google OAuth strategy
-  │   └── utils/
-  │       └── pdf.js            # PDF text extraction
-  ├── nginx/
-  │   └── job-tracker           # Nginx configuration
-  ├── uploads/                  # Temporary resume storage
-  ├── .env.example              # Environment variable template
-  ├── server.js                 # Express server entry point
-  └── package.json
+```env
+PORT=3000
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/jobtracker
+JWT_SECRET=generate_with_openssl_rand_hex_32
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GEMINI_API_KEY=your_gemini_api_key
+CLIENT_URL=http://localhost:5173
+```
 
-  ---
-  Environment Variables
+### Database Setup
 
-  ┌──────────────────────┬─────────────────────────────┬──────────┐
-  │       Variable       │         Description         │ Required │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ PORT                 │ Server port (default: 3000) │ Yes      │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ NODE_ENV             │ development or production   │ Yes      │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ DATABASE_URL         │ PostgreSQL connection       │ Yes      │
-  │                      │ string                      │          │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ JWT_SECRET           │ Secret key for JWT signing  │ Yes      │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ GOOGLE_CLIENT_ID     │ Google OAuth client ID      │ Yes      │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ GOOGLE_CLIENT_SECRET │ Google OAuth client secret  │ Yes      │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ GEMINI_API_KEY       │ Google Gemini API key       │ Yes      │
-  ├──────────────────────┼─────────────────────────────┼──────────┤
-  │ CLIENT_URL           │ Frontend URL for OAuth      │ Yes      │
-  │                      │ redirects                   │          │
-  └──────────────────────┴─────────────────────────────┴──────────┘
+```bash
+sudo -u postgres psql
+```
 
-  ---
-  Deployment
+```sql
+ALTER USER postgres WITH PASSWORD 'your_password';
+CREATE DATABASE jobtracker;
+\q
+```
 
-  See the deployment guide in the project repository. The app is
-  deployed on AWS EC2 with:
+### Run Development Servers
 
-  - Server: Ubuntu 24.04 on t2.micro (free tier)
-  - Web Server: Nginx reverse proxy
-  - Process Manager: PM2
-  - Database: PostgreSQL (self-hosted)
-  - SSL: Let's Encrypt (auto-renewing)
-  - Domain: https://jobtracker.crabdance.com
+Terminal 1 -- Backend:
 
-  Production Commands
+```bash
+npm run start
+```
 
-  # Check server status
-  pm2 status
+Terminal 2 -- Frontend:
 
-  # View logs
-  pm2 logs job-tracker
+```bash
+cd frontend
+npm run dev
+```
 
-  # Restart server
-  pm2 restart job-tracker
+Open **http://localhost:5173** in your browser.
 
-  # Renew SSL certificate
-  sudo certbot renew --dry-run
+---
 
-  ---
-  License
+## API Endpoints
 
-  ISC
+| Method | Endpoint                   | Description                   | Auth |
+| ------ | -------------------------- | ----------------------------- | ---- |
+| POST   | `/api/auth/signup`         | Register a new user           | No   |
+| POST   | `/api/auth/login`          | Login with email and password | No   |
+| GET    | `/api/auth/google`         | Redirect to Google OAuth      | No   |
+| GET    | `/api/auth/google/callback`| Google OAuth callback         | No   |
+| GET    | `/api/jobs`                | List all jobs for user        | Yes  |
+| POST   | `/api/jobs`                | Add a new job application     | Yes  |
+| POST   | `/api/jobs/:id/analyze`    | Upload resume and run analysis| Yes  |
+| GET    | `/api/jobs/:id/analysis`   | Retrieve latest analysis      | Yes  |
 
-  ---
+---
+
+## Project Structure
+
+```
+job-tracker/
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx              # Main application component
+│   │   ├── index.css            # Global styles and Tailwind imports
+│   │   └── main.jsx             # React entry point
+│   ├── dist/                    # Production build output
+│   ├── tailwind.config.js       # Tailwind CSS configuration
+│   └── vite.config.js           # Vite bundler configuration
+├── src/
+│   ├── db.js                    # PostgreSQL connection pool
+│   ├── schema.sql               # Database table definitions
+│   ├── middleware/
+│   │   └── protect.js           # JWT authentication middleware
+│   ├── routes/
+│   │   ├── auth.js              # Signup, login, Google OAuth
+│   │   ├── jobs.js              # Job application CRUD
+│   │   └── analyze.js           # Resume upload and AI analysis
+│   ├── services/
+│   │   ├── gemini.js            # Google Gemini API integration
+│   │   └── googleAuth.js        # Passport Google OAuth strategy
+│   └── utils/
+│       └── pdf.js               # PDF text extraction utility
+├── nginx/
+│   └── job-tracker              # Nginx reverse proxy configuration
+├── uploads/                     # Temporary PDF storage (auto-cleaned)
+├── .env.example                 # Environment variable template
+├── server.js                    # Express server entry point
+└── package.json
+```
+
+---
+
+## Database Schema
+
+```sql
+users       id, email (unique), password, created_at
+jobs        id, user_id (FK), company, role, status, description, created_at
+analyses    id, job_id (FK), resume_text, match_score, missing_skills, action_plan, created_at
+```
+
+**Status values:** `not_applied`, `pending`, `applied`, `in_review`
+
+---
+
+## Deployment
+
+Deployed on AWS EC2 free tier with the following production stack:
+
+| Component    | Configuration                            |
+| ------------ | ---------------------------------------- |
+| Instance     | Ubuntu 24.04, t2.micro (1 vCPU, 1GB RAM)|
+| Web Server   | Nginx reverse proxy                      |
+| App Server   | Node.js managed by PM2                   |
+| Database     | PostgreSQL 16 (self-hosted)              |
+| SSL          | Let's Encrypt with auto-renewal          |
+| Domain       | jobtracker.crabdance.com                 |
+
+### Production Commands
+
+```bash
+pm2 status                         # Check running processes
+pm2 logs job-tracker               # View application logs
+pm2 restart job-tracker            # Restart the application
+sudo certbot renew --dry-run       # Test SSL renewal
+sudo systemctl status nginx        # Check Nginx status
+```
+
+---
+
+## License
+
+ISC
